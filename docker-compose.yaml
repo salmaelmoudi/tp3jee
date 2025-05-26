@@ -1,0 +1,28 @@
+services:
+  springapp:
+    build: .
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/tp3jee
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - db
+    volumes:
+      - maven_cache:/root/.m2
+
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: tp3jee
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3310:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  maven_cache:
+  db_data:
