@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Patients</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+    <style>
+        body {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .lux-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .lux-header {
+            background: linear-gradient(to right, #bfa46f, #d4af37);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+        }
+
+        .lux-table th {
+            background-color: #f5f5f5;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .lux-table td, .lux-table th {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .lux-btn {
+            border-radius: 50px;
+            padding: 0.4rem 1rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .lux-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.4em 0.7em;
+        }
+
+        .form-control {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="lux-card">
+        <div class="lux-header">
+            🏥 Liste Élégante des Patients
+        </div>
+        <div class="p-4">
+
+            <!-- Search bar -->
+            <form class="row g-3 align-items-center mb-4" method="get" th:action="@{/index}">
+                <div class="col-auto">
+                    <label for="keyword" class="col-form-label fw-semibold">🔍 Rechercher :</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" id="keyword" name="keyword" th:value="${keyword}" class="form-control" placeholder="Entrer un nom..."/>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-dark lux-btn">Chercher</button>
+                </div>
+            </form>
+
+            <!-- Patient table -->
+            <div class="table-responsive">
+                <table class="table table-hover lux-table">
+                    <thead>
+                    <tr>
+                        <th>🆔 ID</th>
+                        <th>👤 Nom</th>
+                        <th>🎂 Naissance</th>
+                        <th>🩺 État</th>
+                        <th>📊 Score</th>
+                        <th>⚙️ Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${listPatients}">
+                        <td th:text="${p.id}"></td>
+                        <td th:text="${p.nom}"></td>
+                        <td th:text="${#dates.format(p.dateNaissance, 'dd/MM/yyyy')}"></td>
+                        <td>
+                            <span th:if="${p.malade}" class="badge bg-danger">Malade</span>
+                            <span th:if="${!p.malade}" class="badge bg-success">Sain</span>
+                        </td>
+                        <td th:text="${p.score}"></td>
+                        <td>
+                            <a th:href="@{/delete(id=${p.id}, page=${currentPage}, keyword=${keyword})}" class="btn btn-outline-danger btn-sm lux-btn">🗑 Supprimer</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:each="page, status : ${pages}">
+                        <a class="page-link lux-btn"
+                           th:classappend="${(currentPage==status.index)? 'bg-dark text-white' : ''}"
+                           th:href="@{/index(page=${status.index}, keyword=${keyword})}"
+                           th:text="${status.index}">1</a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
